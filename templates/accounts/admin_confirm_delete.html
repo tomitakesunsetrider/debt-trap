@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}削除確認 | debt-trap{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <h1 class="h4 mb-3">管理者ユーザーを削除します</h1>
+        <div class="card p-4">
+            <p>
+                ユーザー <strong>{{ object.username }}</strong> を本当に削除しますか?
+                この操作は取り消せません。
+            </p>
+            <form method="post">
+                {% csrf_token %}
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-danger">削除する</button>
+                    <a href="{% url 'admin_portal:user_list' %}" class="btn btn-outline-secondary">キャンセル</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
