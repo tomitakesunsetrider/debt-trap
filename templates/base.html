@@ -1,0 +1,107 @@
+{% load static %}<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}debt-trap | 模擬決済API{% endblock %}</title>
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+        crossorigin="anonymous">
+    <style>
+        body { background: #f7f8fa; }
+        .navbar-brand { font-weight: 700; letter-spacing: 0.04em; }
+        .card { border: 1px solid #e6e8ec; box-shadow: 0 1px 3px rgba(16, 24, 40, 0.04); }
+        pre.api-key {
+            background: #0f172a; color: #f8fafc; padding: 1rem;
+            border-radius: .5rem; word-break: break-all; white-space: pre-wrap;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: .95rem;
+        }
+        .status-badge.succeeded { background-color: #198754; }
+        .status-badge.failed { background-color: #dc3545; }
+        .kind-badge.charge { background-color: #0d6efd; }
+        .kind-badge.refund { background-color: #6f42c1; }
+        .role-badge.admin { background-color: #fd7e14; }
+        .role-badge.end_user { background-color: #20c997; }
+        footer { color: #6c757d; font-size: 0.85rem; }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+{% if user.is_authenticated %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'dashboard' %}">debt-trap</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'dashboard' %}">ダッシュボード</a>
+                </li>
+                {% if user.is_end_user_role %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'my_transactions' %}">自分の取引履歴</a>
+                    </li>
+                {% endif %}
+                {% if user.is_admin_role %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'admin_portal:user_list' %}">ユーザー一覧</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'admin_transactions' %}">全取引履歴</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'admin_portal:admin_create' %}">管理者作成</a>
+                    </li>
+                {% endif %}
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <span class="navbar-text me-3">
+                        {{ user.username }}
+                        <span class="badge role-badge {{ user.role }} ms-1">
+                            {{ user.get_role_display }}
+                        </span>
+                    </span>
+                </li>
+                <li class="nav-item">
+                    <form method="post" action="{% url 'logout' %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-light">ログアウト</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endif %}
+
+<main class="container py-4 flex-grow-1">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="text-center py-3 border-top bg-white">
+    <small>debt-trap — 模擬決済API (検証用途のみ)</small>
+</footer>
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+{% block extra_script %}{% endblock %}
+</body>
+</html>

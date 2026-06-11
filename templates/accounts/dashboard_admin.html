@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}管理者ダッシュボード | debt-trap{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4">管理者ダッシュボード</h1>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card text-center p-3">
+            <div class="text-muted small">ユーザー総数</div>
+            <div class="display-6 fw-bold">{{ user_count }}</div>
+            <div class="small text-muted">
+                管理者 {{ admin_count }} / 一般 {{ end_user_count }}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center p-3">
+            <div class="text-muted small">取引総数</div>
+            <div class="display-6 fw-bold">{{ transaction_count }}</div>
+            <div class="small text-muted">全ユーザー累計</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center p-3">
+            <div class="text-muted small">成功 / 失敗</div>
+            <div class="h2 fw-bold mb-0">
+                <span class="text-success">{{ succeeded_count }}</span>
+                /
+                <span class="text-danger">{{ failed_count }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mt-1">
+    <div class="col-md-6">
+        <div class="card p-3 h-100">
+            <h2 class="h6 mb-3">ユーザー管理</h2>
+            <a href="{% url 'admin_portal:user_list' %}" class="btn btn-outline-primary mb-2">
+                ユーザー一覧を見る
+            </a>
+            <a href="{% url 'admin_portal:admin_create' %}" class="btn btn-outline-warning">
+                新しい管理者ユーザーを作成
+            </a>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card p-3 h-100">
+            <h2 class="h6 mb-3">取引監視</h2>
+            <a href="{% url 'admin_transactions' %}" class="btn btn-outline-primary">
+                全ユーザーの取引履歴を見る
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

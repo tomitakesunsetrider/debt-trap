@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}{{ target_user.username }} | debt-trap{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">
+        ユーザー: {{ target_user.username }}
+        <span class="badge role-badge {{ target_user.role }} ms-2">{{ target_user.get_role_display }}</span>
+    </h1>
+    <a href="{% url 'admin_portal:user_list' %}" class="btn btn-outline-secondary btn-sm">一覧に戻る</a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">ユーザー名</dt>
+            <dd class="col-sm-9">{{ target_user.username }}</dd>
+
+            <dt class="col-sm-3">メールアドレス</dt>
+            <dd class="col-sm-9">{{ target_user.email }}</dd>
+
+            <dt class="col-sm-3">ロール</dt>
+            <dd class="col-sm-9">{{ target_user.get_role_display }}</dd>
+
+            <dt class="col-sm-3">状態</dt>
+            <dd class="col-sm-9">{% if target_user.is_active %}有効{% else %}無効{% endif %}</dd>
+
+            <dt class="col-sm-3">登録日</dt>
+            <dd class="col-sm-9">{{ target_user.date_joined|date:"Y/m/d H:i" }}</dd>
+
+            {% if target_user.is_end_user_role %}
+                <dt class="col-sm-3">APIキー</dt>
+                <dd class="col-sm-9">
+                    <pre class="api-key mb-1">{{ target_user.api_key }}</pre>
+                    {% if target_user.api_key_issued_at %}
+                        <small class="text-muted">発行日時: {{ target_user.api_key_issued_at|date:"Y/m/d H:i" }}</small>
+                    {% endif %}
+                </dd>
+            {% endif %}
+        </dl>
+    </div>
+</div>
+
+{% if target_user.is_admin_role %}
+    <div class="d-flex gap-2 mb-3">
+        <a href="{% url 'admin_portal:admin_update' target_user.pk %}" class="btn btn-outline-secondary">編集</a>
+        <a href="{% url 'admin_portal:admin_delete' target_user.pk %}" class="btn btn-outline-danger">削除</a>
+    </div>
+{% endif %}
+
+<div class="card">
+    <div class="card-body">
+        <h2 class="h5 card-title">取引履歴（直近 20 件）</h2>
+        {% if recent_transactions %}
+            {% include "payments/_transaction_table.html" with transactions=recent_transactions show_user_column=False %}
+        {% else %}
+            <p class="text-muted mb-0">取引はありません。</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

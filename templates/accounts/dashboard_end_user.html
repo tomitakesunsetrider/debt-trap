@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}ダッシュボード | debt-trap{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">ダッシュボード</h1>
+        <p class="text-muted mb-0">こんにちは、{{ user.username }} さん</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="h5 card-title">あなたのAPIキー</h2>
+                <p class="text-muted small mb-2">
+                    このキーは決済 API の呼び出し時にヘッダ <code>X-API-Key</code> として使用します。
+                </p>
+                <pre class="api-key mb-3">{{ user.api_key }}</pre>
+                <div class="d-flex flex-wrap gap-2">
+                    <form method="post" action="{% url 'regenerate_api_key' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger"
+                                onclick="return confirm('現在のAPIキーは無効になります。再発行してよろしいですか?');">
+                            APIキーを再発行
+                        </button>
+                    </form>
+                    <a href="{% url 'my_transactions' %}" class="btn btn-outline-primary">
+                        自分の取引履歴を見る
+                    </a>
+                </div>
+                {% if user.api_key_issued_at %}
+                    <p class="text-muted small mt-3 mb-0">
+                        発行日時: {{ user.api_key_issued_at|date:"Y/m/d H:i" }}
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="h5 card-title">サマリー</h2>
+                <ul class="list-unstyled mb-0">
+                    <li class="d-flex justify-content-between border-bottom py-2">
+                        <span class="text-muted">取引総数</span>
+                        <span class="fw-bold">{{ transaction_count }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-body">
+        <h2 class="h5 card-title">直近の取引</h2>
+        {% if recent_transactions %}
+            {% include "payments/_transaction_table.html" with transactions=recent_transactions show_user_column=False %}
+            <a href="{% url 'my_transactions' %}" class="btn btn-sm btn-outline-primary mt-2">
+                すべての履歴を見る
+            </a>
+        {% else %}
+            <p class="text-muted mb-0">まだ取引がありません。</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
