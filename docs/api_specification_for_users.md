@@ -32,7 +32,7 @@ pk_live_aB12_x9-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ### ステップ 3: 最初のリクエストを送る
 
 ```bash
-curl -X POST http://localhost:8000/api/v1/payments/charge \
+curl -X POST http://15.152.44.182/api/v1/payments/charge \
   -H "Content-Type: application/json" \
   -H "X-API-Key: <ここに自分の API キーを貼り付け>" \
   -d '{
@@ -63,7 +63,7 @@ curl -X POST http://localhost:8000/api/v1/payments/charge \
 
 | 項目 | 値 |
 | --- | --- |
-| ベース URL（開発環境） | `http://localhost:8000` |
+| ベース URL（開発環境） | `http://15.152.44.182/` |
 | API ルートパス | `/api/v1` |
 | データフォーマット | JSON（`application/json`） |
 | 文字コード | UTF-8 |
@@ -180,7 +180,7 @@ Content-Type: application/json
 ### 試してみる例
 
 ```bash
-curl -X POST http://localhost:8000/api/v1/payments/charge \
+curl -X POST http://15.152.44.182/api/v1/payments/charge \
   -H "Content-Type: application/json" \
   -H "X-API-Key: pk_live_xxxx" \
   -d '{ "amount": 1500, "currency": "JPY", "card_number": "4000000000000000" }'
@@ -205,7 +205,7 @@ curl -X POST http://localhost:8000/api/v1/payments/charge \
 ### リクエスト例
 
 ```bash
-curl -X POST http://localhost:8000/api/v1/payments/refund \
+curl -X POST http://15.152.44.182/api/v1/payments/refund \
   -H "Content-Type: application/json" \
   -H "X-API-Key: pk_live_xxxx" \
   -d '{
@@ -246,7 +246,7 @@ curl -X POST http://localhost:8000/api/v1/payments/refund \
 自分が作成した取引（charge / refund いずれも）を取得します。
 
 ```bash
-curl http://localhost:8000/api/v1/payments/7b5e4a2c-1a3d-4f6b-9c8e-2f1a0b3c4d5e \
+curl http://15.152.44.182/api/v1/payments/7b5e4a2c-1a3d-4f6b-9c8e-2f1a0b3c4d5e \
   -H "X-API-Key: pk_live_xxxx"
 ```
 
@@ -288,7 +288,7 @@ curl http://localhost:8000/api/v1/payments/7b5e4a2c-1a3d-4f6b-9c8e-2f1a0b3c4d5e 
 ### リクエスト例
 
 ```bash
-curl "http://localhost:8000/api/v1/transactions?kind=charge&status=succeeded&limit=10" \
+curl "http://15.152.44.182/api/v1/transactions?kind=charge&status=succeeded&limit=10" \
   -H "X-API-Key: pk_live_xxxx"
 ```
 
@@ -381,7 +381,7 @@ curl "http://localhost:8000/api/v1/transactions?kind=charge&status=succeeded&lim
 ```python
 import requests
 
-API_BASE = "http://localhost:8000/api/v1"
+API_BASE = "http://15.152.44.182/api/v1"
 API_KEY = "pk_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 headers = {
@@ -412,7 +412,7 @@ else:
 ### JavaScript（`fetch`）
 
 ```javascript
-const API_BASE = "http://localhost:8000/api/v1";
+const API_BASE = "http://15.152.44.182/api/v1";
 const API_KEY = "pk_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
 
 const res = await fetch(`${API_BASE}/payments/charge`, {
