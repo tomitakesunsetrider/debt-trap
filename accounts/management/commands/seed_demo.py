@@ -45,10 +45,13 @@ class Command(BaseCommand):
                 username=username,
                 defaults={"email": email, "role": User.ROLE_END_USER},
             )
-            if created:
-                user.set_password(password)
-                user.save()
-                self.stdout.write(self.style.SUCCESS(f"Created user: {user.username}"))
+            if not created:
+                # 既存ユーザーには取引を重複追加しない（再実行時の冪等性のため）
+                continue
+
+            user.set_password(password)
+            user.save()
+            self.stdout.write(self.style.SUCCESS(f"Created user: {user.username}"))
 
             tx = create_charge(
                 user,

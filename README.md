@@ -85,6 +85,44 @@ python manage.py runserver
 
 ---
 
+## 3.7 Docker で起動する（推奨：本番/外部公開向け）
+
+`nginx`（リバースプロキシ・静的ファイル配信）+ `web`（gunicorn で Django）+ `db`（MySQL 8.0）の 3 コンテナ構成です。
+
+```bash
+# .env を用意（DJANGO_SECRET_KEY を必ず変更してください）
+cp .env.example .env
+
+# ビルド & 起動（マイグレーション・collectstatic は自動実行）
+docker compose up -d --build
+```
+
+- アクセス: `http://localhost/`（nginx が 80 番で受け付け、`web` へプロキシ）
+- 静的ファイルは `collectstatic` 後に nginx が `/static/` で配信します。
+
+### 初期管理者を作成
+```bash
+docker compose exec web python manage.py createadmin --username admin --email admin@example.com
+```
+
+### デモデータ投入（任意）
+```bash
+docker compose exec web python manage.py seed_demo
+```
+
+### 外部から API を受け付ける場合
+- `.env` の `DJANGO_ALLOWED_HOSTS` に公開ドメイン/IP を追加してください（例: `DJANGO_ALLOWED_HOSTS=api.example.com`）。
+- HTTPS 化する場合は nginx で TLS を終端し（`docker/nginx/default.conf` に 443 の `server` を追加 + 証明書をマウント）、`DJANGO_CSRF_TRUSTED_ORIGINS` に `https://api.example.com` を設定してください。Django は `X-Forwarded-Proto` を見て HTTPS を認識します。
+
+### 停止 / ログ確認
+```bash
+docker compose logs -f web    # アプリのログ
+docker compose down           # 停止（DB データは volume に保持）
+docker compose down -v        # DB データも含めて削除
+```
+
+---
+
 ## 4. デモデータ
 ```bash
 python manage.py seed_demo

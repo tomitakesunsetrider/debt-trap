@@ -31,6 +31,16 @@ ALLOWED_HOSTS = [
     if h.strip()
 ]
 
+# リバースプロキシ(nginx)経由でアクセスする際の設定
+CSRF_TRUSTED_ORIGINS = [
+    o.strip()
+    for o in os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",")
+    if o.strip()
+]
+
+# nginx で TLS を終端し X-Forwarded-Proto を渡す構成で HTTPS を正しく認識させる
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -76,10 +86,10 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
+        "ENGINE": os.environ.get("DB_ENGINE", "django.db.backends.mysql"),
         "NAME": os.environ.get("DB_NAME", "debt_trap"),
-        "USER": os.environ.get("DB_USER", "debt_trap"),
-        "PASSWORD": os.environ.get("DB_PASSWORD", ""),
+        "USER": os.environ.get("DB_USER", "root"),
+        "PASSWORD": os.environ.get("DB_PASSWORD", "P@ssw0rd"),
         "HOST": os.environ.get("DB_HOST", "127.0.0.1"),
         "PORT": os.environ.get("DB_PORT", "3306"),
         "OPTIONS": {
